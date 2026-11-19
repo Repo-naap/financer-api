@@ -1,0 +1,25 @@
+# =============================================================================
+# FINANCER – Produção com Domínio Próprio e Certificado HTTPS/SSL Automático
+# Uso: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+# Defina FINANCER_DOMAIN no arquivo .env (ex.: financer.seuescritorio.com.br)
+# =============================================================================
+services:
+  caddy:
+    image: caddy:2-alpine
+    container_name: financer-https-proxy
+    restart: unless-stopped
+    depends_on:
+      - financer
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      FINANCER_DOMAIN: ${FINANCER_DOMAIN:-localhost}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:

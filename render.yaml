@@ -1,0 +1,29 @@
+# Blueprint de Implantação Online na Nuvem (Render.com)
+# Cria automaticamente o servidor web HTTPS + banco PostgreSQL centralizado
+databases:
+  - name: financer-db
+    databaseName: financer_db
+    user: financer
+    plan: starter
+
+services:
+  - type: web
+    name: financer-gestao-financeira
+    runtime: docker
+    plan: starter
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: financer-db
+          property: connectionString
+      - key: DATABASE_SSL
+        value: "true"
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: SERVE_FRONTEND
+        value: "true"
+      - key: CORS_ORIGIN
+        value: "*"
